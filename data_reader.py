@@ -20,19 +20,18 @@ def get_data(filename):
 
         for data_line in reader:
             number, time, source, destination, protocol, length, info = data_line
-            data['number'].append(number)
             data['time'].append(time)
             data['src_ip'].append(source)
             data['dest_ip'].append(destination)
             data['ip_to_ip'].append(source+'->'+destination)
             data['protocol'].append(protocol)
             data['length'].append(length)
-            data['info'].append(info)
 
     return data
 
 def data_visualization_protocols(data):
-    dict_protocols = Counter(data['protocol'])
+    dict_protocols_original = Counter(data['protocol'])
+    dict_protocols = {k: v for k, v in dict_protocols_original.items() if v >= 100}
     protocols = []
     num_protocols = []
     
@@ -57,7 +56,7 @@ def data_visualization_volumes(data):
                 volume += float(data['length'][index])
         volume_ip_to_ip[ip_to_ip] = volume
     
-    filtered_volume_ip_to_ip = {k: v for k, v in volume_ip_to_ip.items() if v >= 150000}
+    filtered_volume_ip_to_ip = {k: v for k, v in volume_ip_to_ip.items() if v >= 100000}
     ips = []
     volumes = []
     for ip_to_ip, volume in filtered_volume_ip_to_ip.items():
@@ -139,5 +138,5 @@ data_visualization_volumes(data)
 print('Total volumes bar chart generated...')
 data_visualization_flow_rate_all(data)
 print('Flow rate graph generated...')
-data_visualization_flow_rate_one(data, '192.168.0.112', youtube_ip)
+data_visualization_flow_rate_one(data, '192.168.0.112', discord_ip)
 print('Flow rate graph for 1.04.237.167.26, 192.168.0.112 communication...\n')
