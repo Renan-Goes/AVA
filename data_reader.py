@@ -4,21 +4,19 @@ import csv
 from collections import Counter
 
 def get_data(filename):
-    data = {
-        "number": [],
+    data = {    # dictionary to store the necessary information
         "time": [],
         "src_ip": [],
         "dest_ip": [],
-        "ip_to_ip": [],
+        "ip_to_ip": [], # this will store the specific link between ip's
         "protocol": [],
-        "length": [],
-        "info": []
+        "length": []
     }
 
     with open(filename, 'r') as f:
         reader = csv.reader(f)
 
-        for data_line in reader:
+        for data_line in reader:    # reads each line and stores the given information
             number, time, source, destination, protocol, length, info = data_line
             data['time'].append(time)
             data['src_ip'].append(source)
@@ -44,7 +42,7 @@ def data_visualization_protocols(data):
     ax1.legend(wedges, protocols, title='Protocols', loc='center left', bbox_to_anchor=(-0.3, 0.5))
     ax1.set_title("Protocols pie chart:")
 
-    plt.savefig('protocols.png')
+    plt.savefig('data/protocols.png')
     
     table = [[protocol, num_protocol] for protocol, num_protocol in zip(protocols, num_protocols)]
 
@@ -54,7 +52,7 @@ def data_visualization_protocols(data):
     table_fig = ax2[0].table(cellText=table, loc='center')
     ax2[1].plot(num_protocols, protocols)
 
-    plt.savefig('protocols_table.png')
+    plt.savefig('data/protocols_table.png')
 
 def data_visualization_volumes(data):
     volume_ip_to_ip = {}
@@ -66,7 +64,7 @@ def data_visualization_volumes(data):
                 volume += float(data['length'][index])
         volume_ip_to_ip[ip_to_ip] = volume
     
-    filtered_volume_ip_to_ip = {k: v for k, v in volume_ip_to_ip.items() if v >= 100000}
+    filtered_volume_ip_to_ip = {k: v for k, v in volume_ip_to_ip.items() if v >= 5000000}
     ips = []
     volumes = []
     for ip_to_ip, volume in filtered_volume_ip_to_ip.items():
@@ -78,7 +76,7 @@ def data_visualization_volumes(data):
     plt.xticks(rotation=30)
     plt.ylabel("Volume")
     ax.bar(ips, volumes)
-    plt.savefig('volumes.png')
+    plt.savefig('data/volumes.png')
 
 def data_visualization_volume_in_time_one(data, client_ip, service_ip):
     times_found_download = []
@@ -103,9 +101,9 @@ def data_visualization_volume_in_time_one(data, client_ip, service_ip):
     plt.plot(times_found_download, sizes_found_download, label='Download')
     plt.plot(times_found_upload, sizes_found_upload, label='Upload')
 
-    plt.legend(loc='center', bbox_to_anchor=(-0.09, 0.05))
+    plt.legend(title=f'{client_ip} {service_ip}', loc='center', bbox_to_anchor=(0, 0.035))
 
-    plt.savefig('flow_rate_specific.png')
+    plt.savefig('data/flow_rate_specific.png')
 
     
 def data_visualization_volume_in_time_all(data):
@@ -138,14 +136,13 @@ def data_visualization_volume_in_time_all(data):
     fontP.set_size('xx-small')
     plt.legend(title='Source->Destination', loc='center right', bbox_to_anchor=(1.125, 0.75), prop=fontP)
 
-    plt.savefig('flow_rate.png')
+    plt.savefig('data/flow_rate.png')
     
 whatsapp_ip = '157.240.216.60'
-steam_ip = '204.79.197.200'
-discord_ip = '162.159.137.232'
-youtube_ip = '172.217.29.118'
+discord_ip = '38.113.165.110'
+youtube_ip = '185.41.140.16'
 
-data = get_data('capture.csv')
+data = get_data('capture2.csv')
 print('\nData has been read!')
 data_visualization_protocols(data)
 print('Protocol pie chart generated...')
@@ -153,5 +150,5 @@ data_visualization_volumes(data)
 print('Total volumes bar chart generated...')
 data_visualization_volume_in_time_all(data)
 print('Flow rate graph generated...')
-data_visualization_volume_in_time_one(data, '192.168.0.112', discord_ip)
+data_visualization_volume_in_time_one(data, '192.168.0.112', youtube_ip)
 print('Flow rate graph for 1.04.237.167.26, 192.168.0.112 communication...\n')
